@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OS Memory Management Simulator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>OS Memory Management Simulator</h1>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('contiguous', this)">Contiguous Allocation</button>
+        <button class="tab-btn" onclick="switchTab('paging', this)">Paging & Replacement</button>
+      </div>
+    </header>
+
+    <!-- CONTIGUOUS ALLOCATION PANEL -->
+    <section id="contiguous" class="panel active">
+      <div class="controls">
+        <div class="field">
+          <label>Total Memory (KB)</label>
+          <input type="number" id="totalMemInput" value="1024" min="64" step="64" />
+        </div>
+        <button class="btn btn-secondary" onclick="initMemory()">Reset Memory</button>
+
+        <div class="field">
+          <label>Algorithm</label>
+          <select id="allocAlgo">
+            <option value="first">First Fit</option>
+            <option value="best">Best Fit</option>
+            <option value="worst">Worst Fit</option>
+            <option value="next">Next Fit</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Process Size (KB)</label>
+          <input type="number" id="procSizeInput" value="128" min="1" />
+        </div>
+        <button class="btn" onclick="allocateProcess()">Allocate</button>
+        <button class="btn btn-secondary" onclick="compactMemory()">Compact</button>
+      </div>
+
+      <p class="hint">Click any allocated (blue) block to deallocate it.</p>
+      <div id="memoryBar" class="memory-bar"></div>
+
+      <div class="metrics">
+        <div class="metric-card"><span>Total Memory</span><strong id="mTotal">1024 KB</strong></div>
+        <div class="metric-card"><span>Used Memory</span><strong id="mUsed">0 KB</strong></div>
+        <div class="metric-card"><span>Free Memory</span><strong id="mFree">1024 KB</strong></div>
+        <div class="metric-card"><span>Free Blocks (Fragmentation)</span><strong id="mFrags">1</strong></div>
+      </div>
+
+      <div id="allocLog" class="log-box"></div>
+    </section>
+
+    <!-- PAGING & PAGE REPLACEMENT PANEL -->
+    <section id="paging" class="panel">
+      <div class="controls">
+        <div class="field">
+          <label>Algorithm</label>
+          <select id="pageAlgo">
+            <option value="fifo">FIFO (First-In, First-Out)</option>
+            <option value="lru">LRU (Least Recently Used)</option>
+            <option value="optimal">Optimal</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Frames</label>
+          <input type="number" id="frameCountInput" value="3" min="1" max="8" />
+        </div>
+        <div class="field field-wide">
+          <label>Reference String (space-separated)</label>
+          <input type="text" id="refStringInput" value="3 2 1 0 3 2 4 3 2 1 0 4" />
+        </div>
+        <button class="btn" onclick="preparePaging()">Load Simulation</button>
+        <button class="btn btn-warning" onclick="checkBelady()">Check Belady's Anomaly</button>
+      </div>
+
+      <div class="playback-bar">
+        <button class="btn btn-secondary" id="btnPrev" onclick="stepPaging(-1)">Prev</button>
+        <button class="btn" id="btnNext" onclick="stepPaging(1)">Next</button>
+        <button class="btn btn-secondary" id="btnPlay" onclick="togglePlay()">Auto-Play</button>
+        <button class="btn btn-secondary" onclick="resetPagingView()">Show All</button>
+        <span id="stepIndicator" class="step-indicator">Step: 0 / 0</span>
+      </div>
+
+      <div id="anomalyBox" class="anomaly-box"></div>
+
+      <div class="metrics">
+        <div class="metric-card"><span>References Shown</span><strong id="pTotal">0</strong></div>
+        <div class="metric-card"><span>Page Hits</span><strong id="pHits" class="text-success">0</strong></div>
+        <div class="metric-card"><span>Page Faults</span><strong id="pFaults" class="text-danger">0</strong></div>
+        <div class="metric-card"><span>Hit Ratio</span><strong id="pRatio">0%</strong></div>
+      </div>
+
+      <div id="pagingTableWrap" class="table-wrap"></div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
